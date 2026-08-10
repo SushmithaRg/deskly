@@ -16,8 +16,13 @@ import {
 const app = express();
 const prisma = new PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET || 'deskly-super-secret-key-2026';
-const PORT = process.env.PORT || 5000;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || './uploads';
+const PORT = Number(process.env.PORT) || 5000;
+
+// Vercel functions can write only to /tmp.
+// Local development continues to use ./uploads.
+const UPLOAD_DIR =
+  process.env.UPLOAD_DIR ||
+  (process.env.VERCEL ? '/tmp/uploads' : './uploads');
 
 // Ensure upload directory exists
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -906,12 +911,31 @@ app.get('/api/v1/manager/team-status', authenticateJWT, async (req: AuthRequest,
 // ─────────────────────────────────────────────────────────────────
 // Start Server
 // ─────────────────────────────────────────────────────────────────
-app.listen(PORT, async () => {
-  console.log(`\n⚡ Deskly Enterprise Backend`);
-  console.log(`   Running on: http://localhost:${PORT}`);
-  console.log(`   Database: ${process.env.DATABASE_URL || 'SQLite (prisma/dev.db)'}`);
-  console.log(`   Email: ${process.env.GMAIL_USER && process.env.GMAIL_USER !== 'your-gmail@gmail.com' ? '✅ Configured (real Gmail SMTP)' : '⚠️  Not configured — email alerts will log to console only'}`);
-  console.log('');
-});
+// ─────────────────────────────────────────────────────────────────
+// Start Server
+// ─────────────────────────────────────────────────────────────────
+
+// Local development:
+//    npm run dev → Express listens on port 5000
+//
+// Vercel:
+//    Vercel handles the serverless function itself,
+//    so app.listen() must NOT be called.
+if (!process.env.VERCEL) {
+  app.listen(PORT, async () => {
+    console.log(`\n⚡ Deskly Enterprise Backend`);
+    console.log(`   Running on: http://localhost:${PORT}`);
+    console.log(`   Database: ${process.env.DATABASE_URL ? 'PostgreSQL' : 'Database URL not configured'}`);
+    console.log(
+      `   Email: ${
+        process.env.GMAIL_USER &&
+        process.env.GMAIL_USER !== 'your-gmail@gmail.com'
+          ? '✅ Configured (real Gmail SMTP)'
+          : '⚠️ Not configured — email alerts will log to console only'
+      }`
+    );
+    console.log('');
+  });
+}
 
 export default app;
