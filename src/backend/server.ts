@@ -14,7 +14,10 @@ import {
 } from './emailService';
 
 const app = express();
-const prisma = new PrismaClient();
+// Create or reuse Prisma client to avoid exhausting connections in serverless environments
+const globalAny: any = globalThis as any;
+const prisma: PrismaClient = globalAny.__deskly_prisma || new PrismaClient();
+if (!globalAny.__deskly_prisma) globalAny.__deskly_prisma = prisma;
 const JWT_SECRET = process.env.JWT_SECRET || 'deskly-super-secret-key-2026';
 const PORT = Number(process.env.PORT) || 5000;
 
@@ -88,7 +91,10 @@ export const authenticateJWT = (req: AuthRequest, res: Response, next: NextFunct
 };
 
 // ─────────────────────────────────────────────────────────────────
-// Helper: Parse JSON fields stored as strings in SQLite
+// Helper: Parse JSON fields stored as strings in the database (PostgreSQL)
+// Fields like `skills`, `education`, `certifications`, and `experience`
+// are stored as JSON-serialized strings in Prisma models and must be
+// parsed back into arrays when returning to the client.
 // ─────────────────────────────────────────────────────────────────
 function parseUserProfile(user: any) {
   return {

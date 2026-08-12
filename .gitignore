@@ -49,3 +49,5 @@ service-account.json
 *.db
 *.db-journal
 prisma/*.db
+.vercel
+.env*
