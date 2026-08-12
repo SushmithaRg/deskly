@@ -1,5 +1,5 @@
 import serverless from 'serverless-http';
-import app from '../src/backend/server';
+import app from '../src/backend/server.js';
 
 const handler = serverless(app as any);
 
