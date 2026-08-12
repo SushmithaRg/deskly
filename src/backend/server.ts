@@ -11,7 +11,7 @@ import {
   sendLoginAlert,
   sendLeaveSubmittedAlert,
   sendLeaveDecisionAlert
-} from './emailService';
+} from './emailService.js';
 
 const app = express();
 // Create or reuse Prisma client to avoid exhausting connections in serverless environments
