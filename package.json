@@ -7,7 +7,7 @@
     "dev": "concurrently -k -n API,WEB -c blue,green \"npm run server:dev\" \"npm run client:dev\"",
     "client:dev": "vite",
     "build": "tsc && vite build",
-    "vercel-build": "prisma generate && npm run build",
+    "vercel-build": "prisma generate && prisma db push --skip-generate && npm run build",
     "preview": "vite preview",
     "server": "node --loader ts-node/esm src/backend/server.ts",
     "server:dev": "npx tsx watch src/backend/server.ts",
@@ -31,8 +31,7 @@
     "nodemailer": "^6.9.13",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "tailwind-merge": "^2.2.1"
-    ,
+    "tailwind-merge": "^2.2.1",
     "serverless-http": "^3.0.0"
   },
   "devDependencies": {
@@ -54,5 +53,8 @@
     "tsx": "^4.7.0",
     "typescript": "^5.2.2",
     "vite": "^5.1.6"
+  },
+  "prisma": {
+    "seed": "npx tsx src/backend/seedDatabase.ts"
   }
 }

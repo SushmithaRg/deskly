@@ -13,6 +13,15 @@ import {
   sendLeaveDecisionAlert
 } from './emailService.js';
 
+const preferredDatabaseUrl =
+  process.env.DATABASE_URL ||
+  process.env.DESKLY_DB_URL ||
+  process.env.PRISMA_POSTGRES_URL;
+
+if (preferredDatabaseUrl) {
+  process.env.DATABASE_URL = preferredDatabaseUrl;
+}
+
 const app = express();
 // Create or reuse Prisma client to avoid exhausting connections in serverless environments
 const globalAny: any = globalThis as any;

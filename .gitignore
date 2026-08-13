@@ -11,8 +11,12 @@ yarn-error.log*
 
 # Build outputs
 dist/
+dist-server/
 build/
 .vite/
+
+# Runtime uploads (ephemeral on Vercel, local dev only)
+uploads/
 
 # Python
 __pycache__/
@@ -51,3 +55,4 @@ service-account.json
 prisma/*.db
 .vercel
 .env*
+!.env.example
